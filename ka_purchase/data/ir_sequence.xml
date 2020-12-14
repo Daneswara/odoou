@@ -1,0 +1,12 @@
+<odoo>
+	<data>
+		<record id="account_payment_confirm_sequence" model="ir.sequence">
+            <field name="name">Confirmed Payment</field>
+            <field name="code">account.payment.confirm</field>
+            <field name="suffix">/BK/%(range_year)s</field>
+            <field name="padding">4</field>
+            <field name="use_data_range">True</field>
+            <field name="number_increment">1</field>
+       </record>
+	</data>
+</odoo>

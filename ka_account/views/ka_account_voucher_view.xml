@@ -4,7 +4,7 @@
             <field name="name">ka.account.voucher.tree</field>
             <field name="model">ka_account.voucher</field>
             <field name="arch" type="xml">
-                <tree default_order="date desc, id desc">
+                <tree default_order="date desc">
                     <field name="name"/>
                     <field name="journal_id"/>
                     <field name="destination_journal_id" invisible="context.get('default_type') != 'internal'"/>
@@ -24,7 +24,7 @@
             <field name="name">ka.account.voucher.no.create.tree</field>
             <field name="model">ka_account.voucher</field>
             <field name="arch" type="xml">
-                <tree default_order="date desc, id desc" create="false" duplicate="false" delete="false" decoration-info="(state == 'draft')" decoration-success="(state == 'proposed')">
+                <tree default_order="date desc" create="false" duplicate="false" delete="false" decoration-info="(state == 'draft')" decoration-success="(state == 'proposed')">
                     <field name="name"/>
                     <field name="journal_id"/>
                     <field name="destination_journal_id" invisible="context.get('default_type') != 'internal'"/>
@@ -293,7 +293,7 @@
             <field name="name">account.move.no.create.tree</field>
             <field name="model">account.move</field>
             <field name="arch" type="xml">
-                <tree default_order="date desc, id desc" decoration-info="state == 'draft'" create="false" duplicate="false" delete="false" string="Journal Entries">
+                <tree decoration-info="state == 'draft'" create="false" duplicate="false" delete="false" string="Journal Entries">
                     <field name="date"/>
                     <field name="name"/>
                     <field name="partner_id"/>

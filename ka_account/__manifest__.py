@@ -83,7 +83,6 @@ Module Akuntansi yang di sesuaikan dengan kebutuhan PT. Kebon Agung.
         "views/ka_account_periodic_view.xml",
         "views/account_move_inherit.xml",
         "views/account_move_line_inherit.xml",
-        "views/ka_account_settings.xml",
         "wizard/voucher_print_wizard.xml",
         "wizard/bank_statement_line_import_wizard_view.xml",
         "wizard/ka_account_payment_confirm_wizard_view.xml",

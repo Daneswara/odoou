@@ -19,7 +19,7 @@ class persediaan_report_wizard(models.TransientModel):
         # default date
         year = datetime.now().year
         month = datetime.now().month
-        day = datetime.today()
+        day = datetime.now().month
         last_day = monthrange(year, month)[1]
         res['date_from'] = datetime.strftime(datetime(year, 1, 1), '%Y-%m-%d')
         res['date_to'] = datetime.strftime(datetime(year, month, day), '%Y-%m-%d')

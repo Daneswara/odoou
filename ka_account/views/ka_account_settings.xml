@@ -4,17 +4,15 @@
             <field name="name">ka_account.settings.form</field>
             <field name="model">ka_account.settings</field>
             <field name="arch" type="xml">              
-                <form string="KA Custom Account Feature Settings" version="7" create="false" duplicate="false" delete="false"> 
+                <form string="KA Custom Account Feature Settings" version="7"> 
                     <sheet>
-                    	<group string="AutoPosting R/K">
+                    	<group>
                             <field name="autopost_rk"/>
-                            <field name="autopost_account_voucher" attrs="{'invisible':[('autopost_rk','=',False)]}"/>
-                            <field name="autopost_account_move" attrs="{'invisible':[('autopost_rk','=',False)]}"/>
-                        </group>
-                        <group string="Auto Fill Invoice Lines Account">
+                            <field name="autopost_account_voucher"/>
+                            <field name="autopost_account_move"/>
                             <field name="auto_fill_account_invoice_line"/>
-                            <field name="invoice_line_account_combination" attrs="{'invisible':[('auto_fill_account_invoice_line','=',False)]}">
-                                <tree editable="bottom">
+                            <field name="invoice_line_account_combination">
+                                <tree>
                                     <field name="order_type"/>
                                     <field name="product_type"/>
                                     <field name="analytic_type"/>
@@ -25,13 +23,6 @@
                     </sheet>
                 </form>
             </field>
-        </record>
-
-        <record id="action_view_ka_account_settings" model="ir.actions.act_window">
-            <field name="name">Custom Feature Account Settings</field>
-            <field name="res_model">ka_account.settings</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
         </record>
 
         <record model="ir.actions.server" id="action_server_view_ka_account_settings">
@@ -47,7 +38,7 @@
         <menuitem id="menu_ka_account_settings" 
             name="Feature Settings" 
             parent="account.menu_finance" 
-            sequence="7" 
+            sequence="1" 
             action="action_server_view_ka_account_settings"/>
     </data>
 </odoo>

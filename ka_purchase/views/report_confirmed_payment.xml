@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data> 
+		
+		<!--      Action Invoice        -->
+											
+		<template id="template_report_confirmed_payment">
+			<t t-foreach="docs" t-as="o">
+				<div class="row">
+					<t t-call="ka_purchase.report_confirmed_payment_document"/>
+				</div>
+			</t>
+		</template>  
+		<template id="report_confirmed_payment_document">
+			<t t-call="report.html_container">
+				
+				<div class="header" style="font-family: 'Courier New', Courier, monospace; font-size: 12px;text-align: center">
+					<table width="100%">
+						<tr>
+							<td class="text-left"><span t-field="o.confirm_date" t-field-options='{"format": "dd-MM-YY hh:mm:ss"}'/></td>
+							<td class="text-right"><ul class="list-inline"><li>HAL.</li><li><span class="page"/></li></ul></td>
+						</tr>
+					</table>					
+					<div>PT KEBON AGUNG</div>
+					<div>DAFTAR PEMBAYARAN KEPADA REKANAN</div>
+					<div>NO. <span t-field="o.name"/></div>
+					<hr style="background-color: #fff;border-top: 2px dashed #000000;border-bottom:2px dashed #000000"/>
+					<table width="100%">
+						<tr>
+							<td class="text-center" width="5%">NO.</td>
+							<td class="text-left" width="30%">NAMA</td>
+							<td width="20%"></td>
+							<td width="17%"></td>
+							<td width="3%"></td>
+							<td width="15%"></td>
+							<td width="10%"></td>
+						</tr>
+						<tr>
+							<td class="text-center" width="5%">URT</td>
+							<td class="text-left" width="30%">ALAMAT</td>
+							<td width="20%"></td>
+							<td class="text-center" width="17%">JUMLAH</td>
+							<td class="text-right" width="3%"></td>
+							<td class="text-left" colspan="2">NO DAN TANGGAL KUITANSI</td>
+						</tr>
+						<tr>
+							<td class="text-center" width="5%"></td>
+							<td class="text-left" width="30%">NAMA BANK</td>
+							<td class="text-center" width="20%">NOMOR REKENING</td>
+							<td class="text-center" width="17%">(Rp)</td>
+							<td class="text-center" width="3%"></td>
+							<td colspan="2"></td>
+						</tr>
+					</table>
+					<hr style="background-color: #fff;border-top: 2px dashed #000000;"/>			
+				</div>
+				
+				<div class="page" style="font-family: 'Courier New', Courier, monospace; font-size: 12px;text-align: center"> 
+					<br></br>
+					<br></br>
+					<br></br>
+					<table width="100%">
+						<t t-set="no" t-value="1"/>
+                    	<t t-foreach="o.get_partners()" t-as="partner">
+							<tr>
+								<td class="text-center" width="5%"><span t-esc="no"/> <t t-set="no" t-value="no+1"/></td>
+								<td class="text-left" style="text-transform:uppercase" colspan="6"><span t-esc="partner.name"></span></td>
+							</tr>
+							<tr>
+								<td class="text-center" width="5%"></td>
+								<td class="text-left" style="text-transform:uppercase" colspan="6"><span t-esc="partner.street"/><span t-esc="partner.street2"/>
+									<span t-esc="partner.city"/> <span t-esc="partner.state_id.name"/>							
+						      	</td>
+							</tr>
+							<t t-set="subtotal" t-value="0"/>
+							<t t-set="partner_bank" t-value="False"/>
+							<t t-set="account_number" t-value="False"/>		
+							<t t-foreach="o.get_payments(partner)" t-as="payment">
+								<tr>							
+									<td class="text-center" width="5%"></td>
+									<t t-if="partner.bank == partner_bank">
+										<td class="text-left" width="30%">s.d.a</td>
+									</t>
+									<t t-if="partner.bank != partner_bank">
+										<td class="text-left" style="text-transform:uppercase" width="30%"><span t-esc="partner.bank"/></td>
+									</t>
+									<t t-if="partner.no_acc == account_number">
+										<td class="text-center" width="20%">s.d.a</td>
+									</t>
+									<t t-if="partner.no_acc != account_number">
+										<td class="text-center" style="text-transform:uppercase" width="20%">AC. <span t-esc="partner.no_acc"/></td>
+									</t>
+									<td class="text-right" width="17%"><span t-esc="'{0:,.2f}'.format(int(payment.amount))"/></td>
+									<td class="text-right" width="3%"></td>
+									<td class="text-left" style="text-transform:uppercase" width="15%"><span t-esc="payment.no_kwitansi"/></td>
+									<td class="text-left" width="10%">, <span t-esc="payment.vendor_invoice_date"/></td>
+								</tr>
+								<tr>	
+									<td class="text-center" width="5%"></td>
+									<td class="text-left" width="30%">s.d.a</td>
+									<td class="text-center" width="20%"><span>s.d.a</span></td>
+									<td class="text-right" width="17%"><span t-esc="'{0:,.2f}'.format(int(payment.amount_ppn))"/></td>
+									<td class="text-right" width="3%"></td>
+									<td class="text-left" style="text-transform:uppercase" width="15%">FP.						:</td>
+									<td class="text-left" width="10%"></td>
+								</tr>
+								<tr>	
+									<td class="text-center" width="5%"></td>
+									<td class="text-left" width="30%">s.d.a</td>
+									<td class="text-center" width="20%"><span>s.d.a</span></td>
+									<td class="text-right" width="17%"><span t-esc="'{0:,.2f}'.format(int(payment.amount_penalty))"/></td>
+									<td class="text-right" width="3%"></td>
+									<td class="text-left" style="text-transform:uppercase" width="15%"><span t-esc="payment.no_kwitansi"/></td>
+									<td class="text-left" width="10%">, <span t-esc="payment.vendor_invoice_date"/></td>
+								</tr>
+								<t t-set="subtotal" t-value="subtotal+payment.amount+payment.amount_ppn+payment.amount_penalty"/>
+								<t t-set="partner_bank" t-value="partner.bank"/>
+								<t t-set="account_number" t-value="partner.no_acc"/>	
+							</t>
+							<tr>
+								<td colspan="7"><div style="min-height:19px"/></td>
+							</tr>
+							<tr>
+								<td class="text-center"></td>
+								<td class="text-center" colspan="6">SUB JUMLAH.....	 <span t-esc="'{0:,.2f}'.format(int(subtotal))"/></td>
+							</tr>
+							<tr>
+								<td colspan="7"><div style="min-height:19px"/></td>
+							</tr>
+							<tr>
+								<td class="text-center"></td>
+								<td class="text-left" colspan="6">Terbilang (<span t-esc="o.amount_to_text_id(subtotal)"/> )</td>
+							</tr>
+							<tr>
+								<td colspan="7"><div style="min-height:19px"/></td>
+							</tr>
+						</t>
+						<tr>
+							<td class="text-center"></td>
+							<td class="text-center" colspan="6">JUMLAH SEMUA.....	<span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></td>
+						</tr>
+						<tr>
+							<td colspan="7"><div style="min-height:19px"/></td>
+						</tr>
+						<tr>
+							<td class="text-center"></td>
+							<td class="text-left" colspan="6">Terbilang (<span t-esc="o.amount_to_text_id(o.amount_total)"/> )</td>
+						</tr>
+						<tr>
+							<td colspan="7"><div style="min-height:120px"/></td>
+						</tr>
+						<tr>
+							<td class="text-left">SUDIBYO</td>
+							<td class="text-right">DIDIT TAURISIANTO</td>
+						</tr>
+					</table>
+				</div>
+			</t>
+		</template>
+	</data>
+</odoo>

@@ -1,0 +1,144 @@
+<odoo>
+	<data>
+		<record id="account.action_account_payments_payable" model="ir.actions.act_window">
+			<field name="context">{'default_payment_type': 'outbound', 'default_is_purchase_payment': True}</field>
+		</record>
+		
+		<record id="view_account_payment_invoice_barcode_form" model="ir.ui.view">
+            <field name="name">account.payment.invoice.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+            	<button name="post" position="attributes">
+            		<attribute name="invisible">1</attribute>
+            	</button>
+            	<button name="post" position="after">
+            		<button name="propose_payment" states="draft" type="object" class="oe_highlight" string="Propose"/>
+            		<button name="set_draft_payment" states="proposed" type="object" string="Set to Draft"/>
+            		<button name="set_draft_payment" type="object" string="Set to Draft" 
+            			groups="account.group_account_manager" attrs="{'invisible': ['|',('state','!=','confirm'),('is_full_confirm','=',True)]}"/>
+            	</button>
+            	<field name="state" position="attributes">
+            		<attribute name="statusbar_visible">draft,proposed,confirm</attribute>
+            	</field>
+            	<field name="payment_date" position="after">
+            		<field name="is_full_confirm" invisible="1"/>
+            		<field name="is_purchase_payment" invisible="1"/>
+            		<field name="account_payment_confirm_id" readonly="1" attrs="{'invisible': ['|',('state','!=','confirm'),('is_purchase_payment','!=',True)]}"/>
+            	</field>
+            	<field name="journal_id" position="after"> 
+            		<field name="invoice_id" domain="[('state','not in',('draft','cancel','paid')),('type','=','in_invoice')]" 
+            			invisible="context.get('default_is_purchase_payment',False) != True"
+            			attrs="{'readonly': [('state','!=','draft')]}"/>
+            		<field name="no_kwitansi" invisible="context.get('default_is_purchase_payment',False) != True"
+            			attrs="{'readonly': [('state','!=','draft')]}"/>
+            		<field name="vendor_invoice_date" invisible="context.get('default_is_purchase_payment',False) != True"
+            			attrs="{'readonly': [('state','!=','draft')]}"/>
+            	</field>
+            	<xpath expr="//form/sheet/group/group[2]" position="after">
+            		<group invisible="context.get('default_is_purchase_payment',False) != True">
+	            		<field name="efaktur_url" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="tax_number" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="tax_date" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="amount_dpp" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="amount_ppn" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="amount_invoice" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="pph" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            		<field name="amount_penalty" attrs="{'readonly': [('state','!=','draft')]}"/>
+	            	</group>
+            	</xpath> 
+            </field>
+       	</record>
+       	
+       	<record id="account_payment_confirm_form" model="ir.ui.view">
+            <field name="name">account.payment.confirm.form</field>
+            <field name="model">account.payment.confirm</field>
+            <field name="arch" type="xml">
+            	<form string="Confirmed Payments" create="0" version="7">
+            		<header>
+            			<button name="action_set_draft" states="confirm" string="Set to Draft" type="object" groups="account.group_account_manager"/>
+                        <button name="action_confirm" class="oe_highlight" states="draft" string="Confirm" type="object" groups="account.group_account_manager"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+            		<sheet>
+            			<div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                        	<group>
+                        		<field name="create_date" string="Creation Date" readonly="1"/>
+                        		<field name="confirm_date" attrs="{'invisible': [('state','!=','confirm')]}"/>
+                        	</group>
+                        </group>
+	            		<notebook>
+	            			<page string="Payments">
+	            				<field name="account_payment_ids" widget="many2many" options="{'reload_on_button': True}">
+	            					<tree create="0" edit="0" delete="0">
+					                    <field name="partner_id" string="Vendor"/>
+					                    <field name="name"/>
+					                    <field name="journal_id"/>
+					                    <field name="invoice_id"/>
+					                    <field name="vendor_invoice_date"/>
+										<field name="amount_ppn"/>
+										<field name="amount_penalty"/>				                    
+					                    <field name="amount"/>
+					                    <field name="state" invisible="1"/>
+					                    <field name="is_full_confirm" invisible="1"/>
+					                    <button name="delete_payment_relation" string="Delete" type="object" icon="fa-trash" 
+					                    	groups="account.group_account_manager" attrs="{'invisible': [('is_full_confirm','=',True)]}"/>
+	            					</tree>
+	            				</field>
+	            				<group>
+	            					<group class="oe_subtotal_footer oe_right">
+	            						<field name="total_amount_untaxed"/>
+	            						<field name="total_ppn"/>
+										<field name="total_penalty"/>	            						
+	                                    <field name="amount_total" class="oe_subtotal_footer_separator"/>
+	                                </group>
+	            				</group>
+	            			</page>
+	            		</notebook>
+            		</sheet>
+            	</form>
+            </field>
+       	</record>
+       	
+       	<record id="account_payment_confirm_tree" model="ir.ui.view">
+            <field name="name">account.payment.confirm.tree</field>
+            <field name="model">account.payment.confirm</field>
+            <field name="arch" type="xml">
+            	<tree string="Confirmed Payments" create="0">
+            		<field name="name"/>
+            		<field name="create_date" string="Creation Date"/>
+            		<field name="confirm_date"/>
+            		<field name="amount_total"/>
+            		<field name="state"/>
+            	</tree>
+            </field>
+        </record>
+       	
+       	<record id="action_open_confirmed_payment" model="ir.actions.act_window">
+		    <field name="name">Confirmed Payments</field>
+		    <field name="res_model">account.payment.confirm</field>
+		    <field name="view_type">form</field>
+		    <field name="view_mode">list,form</field>
+		</record>
+       	
+       	<menuitem name="Confirmed Payments" 
+       		id="menu_confirmed_payment" 
+       		sequence="21"
+       		parent="account.menu_finance_payables"
+            action="action_open_confirmed_payment"
+       		groups="account.group_account_manager"/> 
+       
+       	<act_window
+            id="action_confirm_vendor_payments"
+            name="Confirm Vendor Payments"
+            src_model="account.payment"
+            res_model="account.payment.confirm.wizard"
+            view_mode="form"
+            multi="True"
+            target="new"
+            key2="client_action_multi"/> 
+	</data>
+</odoo>

@@ -11,27 +11,9 @@ class AccountInvoiceLine(models.Model):
             return account_id
         
         purchase_id = self.env['purchase.order'].browse(self._context.get('active_id'))
-        order_type = purchase_id.order_type
-        account_analytic_id = self._context.get('analytic',False)
-        analytic_type = account_analytic_id.pkrat_type
-        product_type = product.type
-
-        settings = self.env['ka_account.settings'].sudo().search([],limit=1)
-        for setting in settings:
-            if setting.auto_fill_account_invoice_line:
-                combination = self.env['setting.invoice.line.account.combination'].sudo().search([
-                                                                                    ('order_type','=',order_type),
-                                                                                    ('product_type','=',product_type),
-                                                                                    ('analytic_type','=',analytic_type),
-                                                                                ],limit=1)
-                if combination:
-                    account_template_id = combination.account_template_id
-
-                    account = self.env['account.account'].with_context(company_id=company.id).search([('account_template_id', '=', account_template_id.id),
-                                                                                                                          ('company_id', '=', company.id)])
-                    
-                    return account
-
+        if product.type == 'service' and purchase_id.order_type == 'rkin':
+            account_id = self.env['account.account'].browse(2959)
+            return account_id
         return super(AccountInvoiceLine, self).get_invoice_line_account(type, product, fpos, company)
     
 

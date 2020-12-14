@@ -18,34 +18,22 @@ class KaAccountSettings(models.Model):
 
     @api.multi
     def open_settings(self):
-        action = self.env.ref('ka_account.action_view_ka_account_settings').read()[0]
-        settings = self.env['ka_account.settings'].search([])
-        
-        if len(settings) == 1:
-            action['views'] = [(False, 'form')]
-            action['res_id'] = settings.ids[0]
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>. masuk ini")
+        # memo    = self.mapped('account_move_id')
+        # action = self.env.ref('ka_account.action_open_memorial_umum').read()[0]
+        # if len(memo) > 1:
+        #     action['domain'] = [('id', 'in', memo.ids)]
+
+        # elif len(memo) == 1:
+        #     action['views'] = [(False, 'form')]
+        #     action['res_id'] = memo.ids[0]
             
-        else:
-            res = self.env.ref('ka_account.action_view_ka_account_settings', False)
-            action['views'] = [(False, 'form')]
+        # else:
+        #     res = self.env.ref('ka_account.action_open_memorial_umum', False)
+        #     action['views'] = [(False, 'form')]
         
-        return action
+        # return action
 
-    @api.onchange('autopost_rk')
-    def onchange_autopost_rk(self):
-        if self.autopost_rk:
-            self.autopost_account_voucher = True
-            self.autopost_account_move = True
-        else:
-            self.autopost_account_voucher = False
-            self.autopost_account_move = False
-
-    @api.onchange('autopost_account_voucher','autopost_account_move')
-    def onchange_auto_fill_invoice_lines_account(self):
-        if self.autopost_account_voucher == True and self.autopost_account_move == True:
-            self.autopost_rk = True
-        elif self.autopost_account_voucher == False and self.autopost_account_move == False:
-            self.autopost_rk = False
 
 class SettingInvoiceLineAccountCombination(models.Model):
     _name  = "setting.invoice.line.account.combination"

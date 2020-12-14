@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<template id="template_slip_penerimaan_kas_plus">
+			<t t-foreach="docs" t-as="o">
+				<t t-call="ka_account.slip_penerimaan_kas_plus_doc"/>
+			</t>
+		</template>
+
+		<template id="slip_penerimaan_kas_plus_doc">
+			<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+			
+			<div class="header" >
+				<style type="text/css">
+					.table-headtext-td1 {
+						width: 28%;
+						padding-left: 5px;
+						vertical-align: middle;
+					}
+					.table-headtext-td2 {
+						width: 18%;
+						vertical-align: middle;
+					}
+					.table-headtext-td3 {
+						width: 54%;
+						vertical-align: middle;
+					}
+				</style>
+
+				<span t-esc="o.mark_printed_document()"/>
+				<div class="row">
+					<div class="col-xs-12">
+						<table width="100%" style="border-collapse: collapse;">
+							<tr height="55px">
+								<td class="text-center" style="border:1px solid black; width:25%">
+									<img src="ka_report_layout/static/src/img/logo-ptkebonagung.png" style="margin: 0 auto; height: 18px"/>
+									<br/>
+									<span t-esc="user.company_id.name"/><br/>
+									<span t-esc="user.company_id.city" style="text-transform: uppercase;"/>
+								</td>
+				
+								<td class="text-center" style="padding: 5px 10px; font-size:18px;border:1px solid black; width:50%; vertical-align: middle">
+									<t t-if="o.type == 'inbound'">
+										<strong><span style="color: #e02929 !important;">BUKTI PENERIMAAN KAS / BANK</span></strong>
+									</t>
+									<t t-elif="o.type == 'outbound'">
+										<strong><span style="color: #3366ff !important;">BUKTI PENGELUARAN KAS / BANK</span></strong>
+									</t>
+									<t t-elif="o.type == 'internal'">
+										<strong><span style="color: #3366ff !important;">BUKTI PENGELUARAN KAS / BANK</span></strong>
+									</t>
+									<t t-elif="o.type == 'intercompany'">
+										<strong><span style="color: #3366ff !important;">BUKTI PENGELUARAN KAS / BANK</span></strong>
+									</t>
+								</td>
+								<td style="padding: 10px; border:1px solid black; width:25%">No. </td>	
+							</tr>
+									
+							<tr height="25px">
+								<td style="padding: 5px; border-bottom: 1px solid #000; border-left: 1px solid #000;" colspan="2">
+									<table style="width:100%;">
+										<tr>
+											<td class="table-headtext-td1">
+												No. Perkiraan:
+												<![CDATA[&nbsp;]]>
+												<t t-if="o.type == 'inbound'">
+													<span t-esc="o.journal_id.default_debit_account_id.code"/>
+												</t>
+												<t t-if="o.type == 'outbound'">
+													<span t-esc="o.journal_id.default_credit_account_id.code"/>
+												</t>
+												<t t-if="o.type == 'internal'">
+													<span t-esc="o.journal_id.default_credit_account_id.code"/>
+												</t>
+												<t t-if="o.type == 'intercompany'">
+													<span t-esc="o.journal_id.default_credit_account_id.code"/>
+												</t>
+											</td>
+
+											<td class="table-headtext-td2">
+												<t t-if="o.journal_id.type == 'cash'">
+													<img src="ka_account/static/description/box-X.png" style="margin: 0 auto;"/>
+												</t>
+												<t t-elif="o.journal_id.type == 'bank'">
+													<img src="ka_account/static/description/box.png" style="margin: 0 auto;"/>
+												</t>
+												KAS
+											</td>
+														
+											<td class="table-headtext-td3">
+												<t t-if="o.journal_id.type == 'cash'">
+													<img src="ka_account/static/description/box.png" style="margin: 0 auto;"/>
+												</t>
+												<t t-elif="o.journal_id.type == 'bank'">
+													<img src="ka_account/static/description/box-X.png" style="margin: 0 auto;"/>
+												</t>
+												BANK
+												<![CDATA[&nbsp;]]>
+												<span t-esc="o.journal_id.default_debit_account_id.name"/>
+											</td>
+										</tr>
+									</table>
+								</td>
+											
+								<td style="padding: 5px; border:1px solid black; vertical-align: middle">
+									Tanggal :
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div> 
+			<!-- END OF HEADER -->
+
+			<div class="page" style="font-family: 'Times New Roman', Times, serif;">
+				<style type="text/css">
+					@media print {
+						.thead-content {
+							display: table-header-group !important;
+						}
+					}
+
+					.thead-td {
+						border: 1px solid #000 !important;
+					}
+
+					.td-content {
+						padding: 4px 5px !important;
+						vertical-align: middle !important;
+					}
+
+					.td-left-right {
+						border-right: 1px solid #000 !important;
+						border-left: 1px solid #000 !important;
+					}
+
+					.td-right {
+						border-right: 1px solid #000 !important;
+					}
+
+					.td-side {
+						padding: 5px 5px 5px 10px;
+						border: 1px solid #000;
+					}
+
+					.td-bottom {
+						padding: 3px 5px !important;
+						vertical-align: middle !important;
+						border-bottom: 1px solid #000 !important;
+					}
+
+					.no-top-bottom {
+						border-top: none !important;
+						border-bottom: none !important;
+					}
+				</style>
+
+				<div class="row" name="payment_lines">	
+					<t t-set="count_lines" t-value="len(o.voucher_lines)"/>
+					<div class="col-xs-9">
+						<table class="table table-condensed table-bordered" style="width:104%; font-size:14px;">
+							<thead class="thead-content">
+								<tr>
+									<td class="thead-td text-center td-content">
+										<t t-if="o.type == 'inbound'">No. Perk. Debit</t>
+										<t t-if="o.type == 'outbound'">No. Perk. Kredit</t>
+										<t t-if="o.type == 'internal'">No. Perk. Kredit</t>
+										<t t-if="o.type == 'intercompany'">No. Perk. Kredit</t>
+									</td>
+									<td class="thead-td td-content">Uraian</td>
+									<td class="thead-td td-content">Rp.</td>
+								</tr>
+							</thead>
+							<tbody>
+
+								<t t-set="bagi"/>
+								<t t-set="line_increment" t-value="1"/>
+								<tr t-foreach="o.voucher_lines" t-as="line">
+									<t t-if="line_increment % 32 == 0 and line_increment != 0">
+										<td style="width:18%; border-bottom: 1px solid #000; border-top: none" class="text-center td-left-right td-content">
+											<t t-foreach="line['account_id']" t-as="voucher_id">
+												<span t-esc="voucher_id['code']"/>
+											</t>
+										</td>
+										<td style="width:60%; border-bottom: 1px solid #000; border-top: none" class="td-right td-content">
+											 <span t-esc="line['name']"/>
+											 <!-- (<t t-esc="line_increment"/>) -  -->
+											 <t t-set="x" t-value="line_increment % 32"/>
+											 <!-- (<t t-esc="x"/>) -->
+											 <t t-set="bagi" t-value="x"/>
+										</td>
+										<td class="text-right td-right td-content" style="width:22%; border-bottom: 1px solid #000; border-top: none">
+											<t t-if="line['amount']"><t t-esc="str('{0:,.2f}'.format(float(line['amount']))).replace('.', '%').replace(',', '.').replace('%', ',')"/></t>
+										</td>
+										<t t-set="line_increment" t-value="0"/>
+									</t>
+									<t t-else="">
+										<td style="width:18%" class="text-center td-left-right td-content no-top-bottom">
+											<t t-foreach="line['account_id']" t-as="voucher_id">
+												<span t-esc="voucher_id['code']"/>
+											</t>
+										</td>
+										<td style="width:60%" class="td-right td-content no-top-bottom">
+											 <span t-esc="line['name']"/>
+											 <!-- (<t t-esc="line_increment"/>) -  -->
+											 <t t-set="x" t-value="line_increment % 32"/>
+											 <!-- (<t t-esc="x"/>) -->
+											 <t t-set="bagi" t-value="x"/>
+										</td>
+										<td class="text-right td-right td-content no-top-bottom" style="width:22%">
+											<t t-if="line['amount']"><t t-esc="str('{0:,.2f}'.format(float(line['amount']))).replace('.', '%').replace(',', '.').replace('%', ',')"/></t>
+										</td>
+									</t>
+									<t t-set="line_increment" t-value="line_increment + 1"/>
+								</tr>
+								<t t-set="max_row" t-value="29"/>
+								<t t-set="bagi" t-value="len(o.voucher_lines) / max_row"/>
+								<t t-set="sisa" t-value="len(o.voucher_lines) % max_row"/>
+
+								<tr t-foreach="range((max_row - (sisa - (bagi * 3))))" t-as="i">
+									<td style="width:18%" class="text-center td-left-right td-content no-top-bottom">
+										<![CDATA[&nbsp;]]>
+									</td>
+									<td style="width:60%" class="td-right td-content no-top-bottom">
+										<![CDATA[&nbsp;]]>
+									</td>
+									<td class="text-right td-right td-content no-top-bottom" style="width:22%">
+										<![CDATA[&nbsp;]]>
+									</td>
+									<t t-set="count_lines" t-value="count_lines + 1"/>
+								</tr>
+									
+								<tr>
+									<td style="border-left:1px solid #000; border-bottom:1px solid #000; border-right: 1px solid #000; border-top: none"></td>
+									<td class="text-right td-content" style="border-bottom: 1px solid #000; border-right: 1px solid #000; border-top: none">
+										Jumlah
+										<![CDATA[&nbsp;]]>
+									</td>
+									<td  class="text-right td-content" style="border:1px solid #000;">
+										<t t-esc="str('{0:,.2f}'.format(float(o.total_amount))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+									</td>
+								</tr>
+
+								<tr style="height:48px">
+									<td class="td-bottom" style="border-left: 1px solid #000; border-right: none;">
+										Jumlah Rupiah :
+									</td>
+									<td class="td-bottom" style="border-right: 1px solid #000; border-left: none" colspan="2">
+										<span t-esc="o.amount_to_text_id(o.total_amount)"/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<t t-foreach="count_lines / max_row" t-as="x">
+						<t t-if="x != 0">
+							<!-- <div class="col-xs-3" style="margin-top:85px;"> -->
+							<div class="col-xs-3">
+								<table width="100%">
+									<tbody>
+										<tr height="180px">
+											<td class="td-side" style="vertical-align: top">
+												<t t-if="o.type == 'inbound'">Diterima dari :</t>
+												<t t-if="o.type == 'outbound'">Dibayarkan kepada :</t>
+												<t t-if="o.type == 'internal'">Dibayarkan kepada :</t>
+												<t t-if="o.type == 'intercompany'">Dibayarkan kepada :</t>
+												<br></br>
+												<span style="margin-top:7px" t-field="o.partner_name"></span>
+											</td>
+										</tr>
+										<tr height="440px">
+											<td class="td-side" style="vertical-align: top">
+												Alamat :
+												<br></br>
+												<span style="margin-top:7px" t-field="o.partner_id.street"/>
+												<br></br>
+												<span t-field="o.partner_id.street2"/>
+												<br></br>
+												<span t-field="o.partner_id.city"/>
+											</td>
+										</tr>
+										<tr height="150px">
+											<td class="td-side" style="vertical-align: top">
+												Nota Kredit :
+												<br></br>
+												<span style="margin-top:7px" t-field="o.description"/>
+												<br></br>
+												<span t-field="o.date" t-field-options='{"format": "dd-MM-yyyy"}'/>
+											</td>
+										</tr>
+										<tr height="150px">
+											<td class="td-side" style="vertical-align: top">Catatan :<br></br>
+												<span style="margin-top:7px" t-field="o.name"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</t>
+						<t t-if="x == 0">
+							<div class="col-xs-3">
+								<table width="100%">
+									<tbody>
+										<tr height="180px">
+											<td class="td-side" style="vertical-align: top">
+												<t t-if="o.type == 'inbound'">Diterima dari :</t>
+												<t t-if="o.type == 'outbound'">Dibayarkan kepada :</t>
+												<t t-if="o.type == 'internal'">Dibayarkan kepada :</t>
+												<t t-if="o.type == 'intercompany'">Dibayarkan kepada :</t>
+												<br></br>
+												<span style="margin-top:7px" t-field="o.partner_name"></span>
+											</td>
+										</tr>
+										<tr height="440px">
+											<td class="td-side" style="vertical-align: top">
+												Alamat :
+												<br></br>
+												<span style="margin-top:7px" t-field="o.partner_id.street"/>
+												<br></br>
+												<span t-field="o.partner_id.street2"/>
+												<br></br>
+												<span t-field="o.partner_id.city"/>
+											</td>
+										</tr>
+										<tr height="150px">
+											<td class="td-side" style="vertical-align: top">
+												Nota Kredit :
+												<br></br>
+												<span style="margin-top:7px" t-field="o.description"/>
+												<br></br>
+												<span t-field="o.date" t-field-options='{"format": "dd-MM-yyyy"}'/>
+											</td>
+										</tr>
+										<tr height="150px">
+											<td class="td-side" style="vertical-align: top">Catatan :<br></br>
+												<span style="margin-top:7px" t-field="o.name"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</t>
+					</t>
+				</div>
+			</div>
+
+			<div class="footer">
+				<style type="text/css">
+					.td-foot {
+						padding: 5px !important;
+						border: 1px solid #000 !important;
+					}
+				</style>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<table width="100%" style="border-collapse: collapse;">
+							<tbody>
+								<tr height="30px">
+									<td class="text-center td-foot">Disiapkan :</td>
+									<td class="text-center td-foot">Diperiksa :</td>
+									<td class="text-center td-foot">Disetujui :</td>
+									<td class="text-center td-foot">
+										<t t-if="o.type == 'inbound'">Diterima :</t>
+										<t t-if="o.type == 'outbound'">Dibayar :</t>
+										<t t-if="o.type == 'internal'">Dibayar :</t>
+										<t t-if="o.type == 'intercompany'">Dibayar :</t>
+									</td>
+									<td width="300px" class="td-foot">Disetor :</td>
+									<td class="text-center td-foot">Lampiran :</td>
+								</tr>
+								<tr>
+									<td rowspan="2" class="td-foot"></td>
+									<td rowspan="2" class="td-foot"></td>
+									<td rowspan="2" class="td-foot"></td>
+									<td rowspan="2" class="td-foot"></td>
+									<td class="td-foot">Nama :</td>
+									<td rowspan="2" class="td-foot"></td>
+								</tr>
+								<tr height="90px">
+									<td class="td-foot">Tanda tangan :</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</template>
+	</data>
+</odoo>

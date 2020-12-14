@@ -19,4 +19,3 @@ from . import res_partner_bank
 from . import ka_account_periodic
 from . import ka_account_daily_close
 from . import ka_account_cashflow_mapping
-from . import ka_account_settings

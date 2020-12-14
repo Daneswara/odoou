@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<template id="template_report_daily_cash">
+			<t t-foreach="docs" t-as="o">
+				<div class="row">
+					<t t-call="ka_account.report_daily_cash_document"/>
+				</div>
+			</t>
+		</template>
+		
+		<template id="report_daily_cash_document">
+			<t t-foreach="docs" t-as="o">
+			<t t-call="report.html_container">
+
+				<t t-set="report_date" t-value="o.report_date"/>
+
+				<div class="header" style="margin:0px 10px 0px 5px; padding-bottom:0px;">
+					<div class="container" position="fixed" style="font-family: 'Courier New', Courier, monospace; font-size:12px;">
+						<div class="row">
+							<div class="col-xs-4" style="padding:0px;">
+								<p class="text-left">
+									PT KEBON AGUNG<br></br>
+									<span t-esc="get_company()"/>
+									<br></br>
+								</p>
+							</div>
+							<div class="col-xs-4" style="padding:0px;">
+								<br></br>
+								<p class="text-center" style="padding:5px; margin:0px">
+									LAPORAN KAS HARIAN<br></br>
+									<span t-field="o.report_date" t-field-options='{"format": "dd-MM-yyyy"}'/><br></br>
+								</p>
+							</div>
+							<div class="col-xs-4" style="padding:0px;">
+								<p class="text-right">
+									<br></br>
+									<br></br>
+									Halaman <span class="page"/>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="page">
+					<t t-set="total_opening_balance" t-value="0"/>
+					<t t-set="total_amount_penerimaan" t-value="0"/>
+					<t t-set="total_amount_pengeluaran" t-value="0"/>
+					<t t-set="total_ending_balance" t-value="0"/>
+					<div class="row">
+						<div class="col-xs-12" style="font-family: 'Courier New', Courier, monospace; font-size:11px; padding-top:10px;">
+							<hr style="background-color: #fff;border-top: 1px dashed #000000;border-bottom:1px dashed #000000"/>
+							<table class="table table-condensed" style="margin-top:-15px;table-layout:fixed;">
+								<thead style="@media print {thead div {display: table-header-group;}};">
+									<tr min-height="30px" style="border-bottom:1px dashed #000;">
+										<th width="14%" style="padding: 3px 5px; vertical-align:middle; border-right:1px dashed #000;" class="text-center">URAIAN</th>
+										<th width="4%" style="padding: 3px 5px; vertical-align:middle; border-right:1px dashed #000;" class="text-center">NOMOR<br></br>BUKTI</th>
+										<t t-foreach="get_journal()" t-as="journal">
+											<th style="padding: 3px 5px; vertical-align:middle; border-right:1px dashed #000;" class="text-center"><span t-esc="journal.name"/></th>
+										</t>
+									</tr>
+								</thead>
+							
+								<tbody>
+									<tr min-height="15px" style="padding-top:20px">
+										<td width="14%" style="padding: 3px 5px;" class="text-left">
+											<br></br>
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;">
+													<p> 
+														SALDO AWAL
+													</p>
+												</div>
+											</div>
+											<br></br>	
+										</td>
+										<td width="4%" style="padding: 3px 5px;">
+											<br></br>
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;">
+												</div>
+											</div>
+											<br></br>
+										</td>
+										<t t-foreach="get_journal()" t-as="journal">
+											<td style="padding: 3px 5px;" class="text-right">
+												<br></br>
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;">
+														<p>
+															<span t-esc="'{0:,.2f}'.format(int(get_opening_balance(journal.id, report_date)))"/>
+															<t t-set="total_opening_balance" t-value="total_opening_balance + get_opening_balance(journal.id, report_date)"/>	
+														</p>
+													</div>
+												</div>
+												<br></br>											
+											</td>
+										</t>
+									</tr>
+									
+									<tr min-height="15px" style="padding-top:20px"> 
+										<td style="padding: 3px 5px;" t-att-colspan="total_td()" class="text-left">
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;">
+													<p> 
+														<u>PENERIMAAN</u>
+													</p>
+												</div>
+											</div>
+											<br></br>
+										</td>
+									</tr>
+										
+									<t t-foreach="get_journal_item_penerimaan(report_date)" t-as="items"> 
+										<tr min-height="15px" style="padding-top:20px">
+											<td style="padding: 3px 5px;" class="text-left">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;"> 
+														<p>
+															<span t-esc="items.name"/>
+														</p>
+													</div>
+												</div>																	
+											</td>
+											<td style="padding: 3px 5px;" class="text-left">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;"> 
+														<p>
+															<span t-esc="items.move_id.name"/>
+														</p>
+													</div>
+												</div>															
+											</td>
+											<t t-foreach="get_journal()" t-as="journal">
+												<td style="padding: 3px 5px;" class="text-right">
+													<div class="row">
+														<div class="col-xs-12" style="margin: 0px;">
+			                                                <t t-if="items.journal_id.id == journal.id">
+			                                                	<p>
+			                                                		<span t-esc="'{0:,.2f}'.format(int(items.debit))"/>	
+			                                                	</p>	
+			                                                </t>
+			                                             	<t t-if="items.journal_id.id != journal.id"> 0 </t>
+				                                      	</div>
+				                                  	</div>                                          
+	                                            </td>
+	                                      	</t>
+										</tr>
+									</t>  
+									
+									<tr> 
+										<td t-att-colspan="2">
+											<div class="row">
+												<div class="col-xs-12" style="margin: -20px 0px;">
+												</div>
+											</div>
+										</td>
+										<td t-att-colspan="total_td()-2">
+											<div class="row">
+												<div class="col-xs-12" style="margin: -20px 0px;">
+													<hr style="background-color: #fff;border-top: 1px dashed #000000;"/>
+												</div>
+											</div>
+										</td>
+									</tr>  
+										
+									<tr min-height="15px" style="padding-top:20px"> 
+										<td colspan="2" style="padding: 3px 5px;" class="text-center">
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;">
+													<p>
+														Jumlah Penerimaan
+													</p>
+												</div>
+											</div>		
+											<br></br>	
+										</td>
+										<t t-foreach="get_journal()" t-as="journal">
+											<td style="padding: 3px 5px;" class="text-right">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;">
+														<p>
+															<span t-esc="'{0:,.2f}'.format(int(get_amount_penerimaan(journal.id, report_date)))"/>
+															<t t-set="total_amount_penerimaan" t-value="total_amount_penerimaan + get_amount_penerimaan(journal.id, report_date)"/>
+														</p>
+													</div>
+												</div>		
+												<br></br>										
+											</td>
+										</t>
+									</tr>
+								
+									<tr min-height="15px" style="padding-top:20px"> 
+										<td style="padding: 3px 5px;" t-att-colspan="total_td()" class="text-left">
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;">
+													<p>
+														<u>PENGELUARAN</u>
+													</p>
+												</div>
+											</div>
+											<br></br>
+										</td>
+									</tr>
+										
+										
+									<t t-foreach="get_journal_item_pengeluaran(report_date)" t-as="items"> 
+										<tr min-height="15px" style="padding-top:20px">
+											<td style="padding: 3px 5px;" class="text-left">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;">
+														<p>
+															<span t-esc="items.name"/>
+														</p>
+													</div>
+												</div>	
+											</td>
+											<td style="padding: 3px 5px;" class="text-left">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;">
+														<p>
+															<span t-esc="items.move_id.name"/>
+														</p>
+													</div>
+												</div>
+											</td>
+											<t t-foreach="get_journal()" t-as="journal">
+												<td style="padding: 3px 5px;" class="text-right">
+													<div class="row">
+														<div class="col-xs-12" style="margin: 0px;">
+	                                                		<t t-if="items.journal_id.id == journal.id">
+	                                                			<p>
+			                                                		<span t-esc="'{0:,.2f}'.format(int(items.credit))"/>	
+	                                                			</p>	
+	                                                		</t>
+	                                             			<t t-if="items.journal_id.id != journal.id"> 0 </t> 
+	                                                	</div>
+	                                                </div>                                        
+	                                            </td>
+	                                      	</t>
+										</tr>
+									</t>
+									
+									<tr> 
+										<td t-att-colspan="2">
+											<div class="row">
+												<div class="col-xs-12" style="margin: -20px 0px;">
+												</div>
+											</div>
+										</td>
+										<td t-att-colspan="total_td()-2">
+											<div class="row">
+												<div class="col-xs-12" style="margin: -20px 0px;">
+													<hr style="background-color: #fff;border-top: 1px dashed #000000;"/>
+												</div>
+											</div>
+										</td>
+									</tr>
+
+										
+									<tr min-height="15px" style="padding-top:20px"> 
+										<td colspan="2" style="padding: 3px 5px;" class="text-center">
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;"> 
+													<p> 
+														Jumlah Pengeluaran
+													</p>
+												</div>
+											</div>
+											<br></br>
+										</td>
+										<t t-foreach="get_journal()" t-as="journal">
+											<td style="padding: 3px 5px;" class="text-right">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px;"> 
+														<p> 
+															<span t-esc="'{0:,.2f}'.format(int(get_amount_pengeluaran(journal.id, report_date)))"/>
+															<t t-set="total_amount_pengeluaran" t-value="total_amount_pengeluaran + get_amount_pengeluaran(journal.id, report_date)"/>		
+														</p>
+													</div>
+												</div>
+												<br></br>											
+											</td>
+										</t>
+										</tr>
+									
+									<tr min-height="15px" style="padding-top:20px">
+										<td style="padding: 3px 5px;" class="text-left">
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px 0px -30px 0px;">
+													<p> 
+														SALDO AKHIR
+													</p>
+												</div>
+											</div>
+											<br></br>
+										</td>
+										<td style="padding: 3px 5px;">
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px 0px -30px 0px;"> 
+												</div>
+											</div>
+											<br></br>
+										</td>
+										<t t-foreach="get_journal()" t-as="journal">
+											<td style="padding: 3px 5px;" class="text-right">
+												<div class="row">
+													<div class="col-xs-12" style="margin: 0px 0px -30px 0px;">
+														<p> 
+															<span t-esc="'{0:,.2f}'.format(int(get_opening_balance(journal.id, report_date) + get_amount_penerimaan(journal.id, report_date) - get_amount_pengeluaran(journal.id, report_date)))"/>
+															<t t-set="total_ending_balance" t-value="total_opening_balance + total_amount_penerimaan - total_amount_pengeluaran "/>
+														</p>
+													</div>
+												</div>
+												<br></br>
+											</td>
+										</t>
+									</tr>
+									
+									<tr> 
+										<td t-att-colspan="total_td()">
+											<div class="row">
+												<div class="col-xs-12" style="margin: -20px 0px;">
+													<hr style="background-color: #fff;border-top: 1px dashed #000000;border-bottom: 1px dashed #000000"/>
+												</div>
+											</div>
+										</td>
+									</tr>  
+									
+								</tbody>
+							</table>
+						</div>
+						
+						<div class="col-xs-3" style="font-family: 'Courier New', Courier, monospace; font-size:11px; padding-top:10px;">
+								<p class="text-left">
+									<span t-esc="get_user()"/> <span t-esc="get_print_date()"/> <span t-esc="get_print_time()"/>
+									<br></br>
+								</p>
+								<table width="100%">
+									<tr>
+										<td class="text-right" width="48%">
+											JUMLAH SEMUA KAS DAN BANK
+										</td>
+										<td class="text-center" width="6%">
+											:
+										</td>
+										<td class="text-right" width="30%">
+										</td>
+									</tr>
+									
+									<tr>
+										<td class="text-right" width="48%">
+											SALDO AWAL
+										</td>
+										<td class="text-center" width="6%">
+											:
+										</td>
+										<td class="text-right" width="30%">
+											<span t-esc="'{0:,.2f}'.format(int(total_opening_balance))"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td class="text-right" width="48%">
+											PENERIMAAN
+										</td>
+										<td class="text-center" width="6%">
+											:
+										</td>
+										<td class="text-right" width="30%">
+											<span t-esc="'{0:,.2f}'.format(int(total_amount_penerimaan))"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td class="text-right" width="48%">
+											PENGELUARAN
+										</td>
+										<td class="text-center" width="6%">
+											:
+										</td>
+										<td class="text-right" width="30%">
+											<span t-esc="'{0:,.2f}'.format(int(total_amount_pengeluaran))"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td class="text-right" width="48%">
+											SALDO AKHIR
+										</td>
+										<td class="text-center" width="6%">
+											:
+										</td>
+										<td class="text-right" width="30%">
+											<span t-esc="'{0:,.2f}'.format(int(total_ending_balance))"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td colspan="3" class="text-center">
+											<br></br>
+											<div class="row">
+												<div class="col-xs-12" style="margin: 0px;">
+													<p> 
+														<span t-esc="get_company_city()"/>, <span t-esc="get_print_date()"/>
+														<br></br>
+														Kasir,
+														<br></br>
+														<br></br>
+														<br></br>
+														<br></br>
+														<br></br>
+														<br></br>
+														<br></br>
+														Henny Riyani, Dra. Ek
+													</p>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</div>							
+					</div>
+				</div>
+			</t>
+			</t>
+		</template>
+	</data>
+</odoo>

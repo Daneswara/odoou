@@ -1,0 +1,7 @@
+.filter-link-1.selected:before,
+.filter-link-2.selected:before {
+	font-family: FontAwesome;
+	position: absolute;
+	left: 6px;
+	content: "\f00c";
+}

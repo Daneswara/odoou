@@ -404,13 +404,9 @@ class ka_account_voucher(models.Model):
                        'is_rk': True,
                        'date': this.date_approve,
                        'date_approve': this.date_approve,
+                       'state': 'approved',
             }
             
-            settings = self.env['ka_account.settings'].sudo().search([],limit=1)
-            for setting in settings:
-                if setting.autopost_account_voucher:
-                    default['state'] = 'approved'
-
             # create kas_masuk
             copy_kas_masuk = self.sudo(source_uid).copy(default=default)
             
@@ -438,9 +434,7 @@ class ka_account_voucher(models.Model):
                     line.sudo(source_uid).copy(default=default_line)
 
                     #post kas masuk
-                    for setting in settings:
-                        if setting.autopost_account_voucher:
-                            copy_kas_masuk.reconcile_voucher()
+                    copy_kas_masuk.reconcile_voucher()
                 
                 else:
                     if line.account_id == this.operating_unit_id.property_account_receivable_id or line.account_id == line.partner_id.property_account_receivable_id:
@@ -521,16 +515,13 @@ class ka_account_voucher(models.Model):
                     acc_move_create = acc_move_obj.sudo(source_uid).with_context(company_id=ou_company.id).create(data_entry)
 
                     # post journal
-                    for setting in settings:
-                        if setting.autopost_account_move:
-                            if acc_move_create:
-                                acc_move_create.post()
+                    if acc_move_create:
+                        acc_move_create.post()
 
                 this.state = 'posted'
                       
             if len(copy_kas_masuk.voucher_lines) == 0:
                 this.dest_account_voucher = False
-                copy_kas_masuk.set_draft_voucher()
                 copy_kas_masuk.unlink()
                 
     @api.multi
