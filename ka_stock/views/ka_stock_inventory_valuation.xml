@@ -1,0 +1,20 @@
+<odoo>
+    <data>
+        <menuitem id="menu_inventory_valuation" name="Nilai Barang Gudang" parent="stock.menu_warehouse_report" sequence="151"/>
+        <menuitem id="menu_inventory_valuation_analytics" name="Analisa Nilai Barang" parent="menu_inventory_valuation" sequence="2" action="stock.quantsact"/>
+        <menuitem id="menu_inventory_valuation_report" 
+            name="Laporan Nilai Barang" 
+            parent="menu_inventory_valuation" 
+            sequence="1" 
+            action="action_report_inventory_valuation_wizard"/>
+
+        <menuitem 
+        	action="action_report_inventory_valuation_wizard"
+			id="menu_inventory_valuation_report_accounting"
+			name="Nilai Persediaan (Gudang)"
+			parent="ka_account.menu_main_persediaan"
+            sequence="1"/>
+
+        <delete model="ir.ui.menu" id="stock.menu_quants" />
+    </data>
+</odoo>

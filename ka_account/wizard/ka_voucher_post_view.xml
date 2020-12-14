@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record id="view_voucher_post_wizard" model="ir.ui.view">
+            <field name="name">ka_voucher.post.wizard.form</field>
+            <field name="model">ka_voucher.post.wizard</field>
+            <field name="arch" type="xml">
+            	<form string="Laporan Kas / Bank">
+                    <group col="6">
+                        <field name="date"/>
+                        <field name="voucher_id" options="{'no_create': True}"/>
+                        <field name="_barcode_scanned" widget="barcode_handler" string="Atau Scan Barcode"/>
+                        <field name="line_ids" nolabel="1" colspan="6">
+                            <tree create="false" decoration-danger="type=='inbound'" decoration-primary="type=='outbound'">
+                                <field name="voucher_id"/>
+                                <field name="date"/>
+                                <field name="description"/>
+                                <field name="partner_id"/>
+                                <field name="journal_id"/>
+                                <field name="total_amount"/>
+                                <field name="type"/>
+                            </tree>
+                        </field>
+                    </group>
+	            	<footer>
+	            		<button name="action_post_voucher" string="Posting" type="object" class="btn-primary"
+                                attrs="{'invisible':[('line_ids','=', [])]}"/> 
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                 	</footer>
+            	</form>
+            </field>
+        </record>
+        
+        <record id="open_voucher_post_wizard" model="ir.actions.act_window">
+            <field name="name">Posting Kas/Bank</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ka_voucher.post.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="target">new</field>
+        </record>
+	</data>
+</odoo>

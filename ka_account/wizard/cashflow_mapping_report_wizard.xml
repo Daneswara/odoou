@@ -1,0 +1,42 @@
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="view_mapping_report_wizard_form">
+			<field name="name">cashflow.mapping.report.wizard.form</field>
+			<field name="model">cashflow.mapping.report.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Cashflow Report Mapping">
+					<field name="wizard_line" nolabel="1">
+						<tree create="false" delete="false">
+							<field name="move_line_id" invisible="1" readonly="1"/>
+							<field name="date" readonly="1"/>
+							<field name="account_id" readonly="1"/>
+							<field name="name" readonly="1"/>
+							<field name="partner_id" readonly="1"/>
+							<field name="analytic_account_id" readonly="1"/>
+							<field name="debit" readonly="1" sum="Total Debit"/>
+							<field name="credit" readonly="1" sum="Total Credit"/>
+							<field name="company_currency_id" invisible="1" readonly="1"/>
+						</tree>
+					</field>
+					<group string="Cashflow Report:">
+						<field name="report_id" options="{'no_create': True, 'no_edit': True}" style="width: 50%%"/>
+					</group>
+					<footer>
+						<button name="report_mapping" string="Set Report" type="object" class="oe_highlight"/>
+						<button string="Batal" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window 
+            name="Cashflow Report Mapping"
+            res_model="cashflow.mapping.report.wizard"
+            src_model="account.move.line"
+            view_mode="form"
+            target="new"
+            multi="True"
+            id="action_view_cashflow_report_mapping"/>
+
+	</data>
+</odoo>

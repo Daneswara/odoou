@@ -1,0 +1,148 @@
+<odoo>
+    <data>
+        <template id="template_inventory_valuation">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="report.html_container">
+                    <div class="header" style="margin:0px 10px 0px 5px; padding-bottom:0px;">
+                        <div class="container" position="fixed" style="font-family: Dotrice; font-size:14px;">
+                            <div class="row">
+                                <div class="col-xs-4" style="padding:0px;">
+                                    <p class="text-left">
+                                        <strong>PT. KEBON AGUNG</strong><br/>
+                                        <strong><span t-esc="user.company_id.name"/></strong><br/>
+                                        <strong><span t-esc="user.company_id.city" style="text-transform: uppercase;"/></strong><br/>
+                                    </p>
+                                </div>
+                                <div class="col-xs-4" style="padding:0px;">
+                                    <p class="text-center">
+                                        <strong>
+                                        REKAPITULASI <br/>
+                                        NILAI BARANG GUDANG <br/>
+                                        -------------- <br/>
+                                        s/d Tanggal <span t-field="o.report_date" t-field-options="{'format': 'dd-MM-yyyy'}"/>
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="page" style="font-family: Arial, Helvetica, sans-serif;">
+                        <br/>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-12" style="font-family: Dotrice; padding-top:30px;">
+                                <table width="100%" style="margin-top:0px;table-layout:fixed;">
+                                    <thead style="@media print {thead div {display: table-header-group;}}; font-size:13px;">
+                                        <tr min-height="50px" style="border:1px dashed #000; padding: 20px;">
+                                            <th width="5%" style="padding: 5px; vertical-align:middle; border:1px dashed #000;" class="text-center" rowspan="2">NO.</th>
+                                            <th width="10%" style="padding: 10px; vertical-align:middle; border:1px dashed #000;" class="text-center" rowspan="2">GROUP</th>
+                                            <th width="30%" style="padding: 10px; vertical-align:middle; border:1px dashed #000;" class="text-left" rowspan="2">NAMA GROUP/GOLONGAN</th>
+                                            <th width="8%" style="padding: 10px; vertical-align:middle; border:1px dashed #000;" class="text-right" rowspan="2">ITEM</th>
+                                            <th width="40%" style="padding: 10px; vertical-align:middle; border:1px dashed #000;" class="text-center" colspan="8">R E K A P I T U L A S I</th>
+                                        </tr>
+                                        <tr style="border:1px dashed #000; padding: 20px;">
+                                            <th width="10%" style="padding: 10px; vertical-align:middle; border:1px dashed #000;" class="text-right" colspan="3">KUANTUM</th>
+                                            <th width="37%" style="padding: 10px; vertical-align:middle; border:1px dashed #000;" class="text-right" colspan="5">N I L A I</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody style="font-size:12px;">
+                                        <t t-set="number" t-value="0.0"/>
+                                        <t t-set="total_item" t-value="0.0"/>
+                                        <t t-set="total_kuantum" t-value="0.0"/>
+                                        <t t-set="total_nilai" t-value="0.0"/>
+
+                                        <t t-foreach="get_inventory_value" t-as="data">
+                                            <t t-set="number" t-value="number + 1"/>
+
+                                            <tr min-height="15px">
+                                                <td style="text-align: center; padding-bottom: 5px; padding-top: 15px;">
+                                                    <span t-esc="number"/>
+                                                </td>
+                                                <td style="text-align: center; padding-bottom: 5px; padding-top: 15px;">
+                                                    <span t-esc="data['code']"/>
+                                                </td>
+                                                <td style="text-align: left; padding-bottom: 5px; padding-top: 15px; padding-left: 10px; padding-right: 10px; text-transform:uppercase;">
+                                                    <span t-esc="data['name']" style="line-height:150%"/>
+                                                </td>
+                                                <td style="text-align: right; padding-bottom: 5px; padding-top: 15px; padding-right: 10px;">
+                                                    <span t-esc="str('{0:,.0f}'.format(float(data['item']))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+                                                </td>
+                                                <td style="text-align: right; padding-bottom: 5px; padding-top: 15px; padding-right: 10px;" colspan="3">
+                                                    <span t-esc="str('{0:,.2f}'.format(float(data['kuantum']))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+                                                </td>
+                                                <td style="text-align: right; padding-bottom: 5px; padding-top: 15px; padding-right: 10px;" colspan="5">
+                                                    <span t-esc="str('{0:,.2f}'.format(float(data['nilai']))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+                                                </td>
+                                            </tr>
+
+                                            <t t-set="total_item" t-value="total_item + data['item']"/>
+                                            <t t-set="total_kuantum" t-value="total_kuantum + data['kuantum']"/>
+                                            <t t-set="total_nilai" t-value="total_nilai + data['nilai']"/>
+
+                                        </t>
+
+                                        <tr min-height="3px">
+                                            <td colspan="12">
+                                                <hr style="border-bottom:1px dashed #000; margin:0px"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr min-height="20px">
+                                            <td style="text-align: center;padding: 5px;" colspan="3"></td>
+                                            <td style="text-align: right;padding: 10px; border-left:1px dashed #000;  border-bottom:1px dashed #000;">
+                                                <strong>
+                                                    <span t-esc="str('{0:,.0f}'.format(float(total_item))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+                                                </strong>
+                                            </td>
+                                            <td style="text-align: right;padding: 10px; border-left:1px dashed #000;  border-bottom:1px dashed #000;" colspan="3">
+                                                <strong>
+                                                    <span t-esc="str('{0:,.2f}'.format(float(total_kuantum))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+                                                </strong>
+                                            </td>
+                                            <td style="text-align: right;padding: 10px; border-left:1px dashed #000;  border-bottom:1px dashed #000;" colspan="5">
+                                                <strong>
+                                                    <span t-esc="str('{0:,.2f}'.format(float(total_nilai))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-call="ka_report_layout.external_layout_footer_inherit"/>
+                </t>
+            </t>
+        </template>
+
+        <record id="paperformat_report_inventory_valuation_A4" model="report.paperformat">
+            <field name="name">A4 Inventory Report</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">20</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report
+                id="action_report_inventory_valuation"
+                model="report.inventory.valuation.wizard"
+                string="Report Inventory Valuation"
+                report_type="qweb-pdf"
+                name="ka_stock.template_inventory_valuation"
+                file="ka_stock.template_inventory_valuation"
+                menu="False"
+                paperformat="paperformat_report_inventory_valuation_A4"
+        />
+
+    </data>
+</odoo>

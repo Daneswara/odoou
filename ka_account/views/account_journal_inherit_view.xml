@@ -1,0 +1,18 @@
+<odoo>
+	<data>
+		<record id="account_journal_form_view_inherit" model="ir.ui.view">
+			<field name="name">account.journal.form.view.inherit</field>
+			<field name="model">account.journal</field>
+			<field name="inherit_id" ref="account.view_account_journal_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet/div[@class='oe_title']" position="before">
+					<div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                        </button>
+                    </div>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

@@ -1,0 +1,55 @@
+<odoo>
+	<data>
+		<record id="download_account_move_line_wizard_form" model="ir.ui.view">
+            <field name="name">download.account.move.line.wizard.form</field>
+            <field name="model">download.account.move.line.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Laporan Arus Kas">
+                    <div class="col-xs-6">
+                        <group>
+                            <field name="account_id"/>
+                            <field name="analytic_account_id"/>
+                            <field name="partner_id"/>
+                            <field name="date_from" required="1"/>
+                            <field name="date_to" required="1"/>
+                        </group>
+                    </div>
+                    <footer>
+                        <button name="action_download_move_line" string="Downlad Excel" type="object" class="btn-primary"
+                                attrs="{'invisible':['|',('date_from','=',False),('date_to','=',False)]}"/> 
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+		<record id="action_download_account_move_line_wizard" model="ir.actions.act_window">
+            <field name="name">Download B3</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">download.account.move.line.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+		<menuitem 
+        	action="action_download_account_move_line_wizard"
+			id="menu_download_account_move_line" 
+			name="Download B3"
+			parent="ka_account.menu_ka_history_transaction" 
+            sequence="2"
+            groups="account.group_account_manager"/> 
+		
+        <report
+            id="account_move_line_xlsx"
+            model="account.move.line"
+            string="Download B3 (account.move.line)"
+            report_type="xlsx"
+            name="account_move_line.xlsx"
+            file="account_move_line.xlsx"
+            attachment_use="False"
+            menu="False"        
+        />
+
+	</data>
+</odoo>

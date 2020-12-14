@@ -1,0 +1,21 @@
+<odoo>
+	<data>
+		<record id="inherit_view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//form/sheet/notebook/page[2]/field[@name='comment']" position="replace">
+            		<group string="Notes">
+            			<field name="comment" nolabel="1" placeholder="Internal notes..."/>
+            		</group>
+            		<group>
+	            		<group string="Sequences">
+	            			<field name="sequence_permintaan_barang_id" string="Permintaan Barang"/>
+	            		</group>
+	            	</group>
+            	</xpath>
+            </field>
+      	</record>
+	</data>
+</odoo>

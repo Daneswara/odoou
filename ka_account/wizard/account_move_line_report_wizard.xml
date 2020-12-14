@@ -1,0 +1,42 @@
+<odoo> 
+	<data>
+		<record id="account_move_line_report_wizard_form" model="ir.ui.view">
+            <field name="name">account.move.line.report.wizard.form</field>
+            <field name="model">account.move.line.report.wizard</field>
+            <field name="arch" type="xml">
+            	<form string="Transaksi Pengadaan">
+                	<div class="col-xs-6">
+            			<group>
+            				<field name="company_id" groups="base.group_multi_company"/>
+            				<field name="account_journal_id" domain="[('company_id', '=', company_id)]"/>
+            				<field name="date_from"/>
+            				<field name="date_to"/>
+            				<field name="password" password="True"/>
+            			</group>
+	            	</div>
+	            	<footer>
+	            		<button name="transaksi_pengadaan_to_dbf" string="Transfer to AU4A2" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                 	</footer>
+            	</form>
+            </field>
+        </record>
+        
+        <record id="action_open_ka_transaksi_pengadaan" model="ir.actions.act_window">
+            <field name="name">Transaksi Pengadaan DBF</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move.line.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="target">new</field>
+        </record>
+        
+        <!-- <menuitem 
+        	action="action_open_ka_transaksi_pengadaan"
+			id="menu_ka_transaksi_pengadaan"
+			name="Transaksi Pengadaan DBF"
+			parent="ka_account.menu_financial_report_viewer" 
+            sequence="7"/> -->
+        
+	</data>
+</odoo>

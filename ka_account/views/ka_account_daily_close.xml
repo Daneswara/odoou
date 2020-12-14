@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record id="view_account_daily_close_form" model="ir.ui.view">
+            <field name="name">ka_account.daily.close.form</field>
+            <field name="model">ka_account.daily.close</field>
+            <field name="arch" type="xml">
+                <form string="Laporan Kas / Bank">
+                    <header>
+                        <button name="action_validate" type="object" states="draft" class="oe_highlight" string="Validate"/>
+                        <button name="action_draft" type="object" states="validate" string="Set Draft"/>
+                        <field name="state" widget="statusbar"/> 
+                    </header>            
+                    <sheet>
+                        <div class="oe_button_box_long" name="button_box"> 
+                    		 <button type="object" name="action_print"
+                    		 	icon="fa-print" string="Cetak"  widget="statinfo">
+                    		 </button>
+                    	</div>	 
+                        <div class="oe_title">
+                            <h1>Tutupan Kas Bank Harian</h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>                                                              
+                                <label for="close_date" string="Tanggal Tutupan"/>
+                                <div>
+                                    <field name="close_date" class="oe_inline" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <button name="action_get_statement" class="oe_inline oe_link" states="draft" type="object" string="→ Refresh"/>
+                                </div>
+                            </group>
+                            <group>
+                                <newline/>
+                                <label for="cash_opname"/>
+                                <div>
+                                    <field class="oe_inline" name="cash_opname" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <button class="oe_inline oe_link" name="open_cashbox_end" string="→ Hitungan Fisik" states="draft" type="object"/> 
+                                </div>
+                            </group>
+                            <field name="statement_ids" nolabel="1" colspan="4" attrs="{'readonly': [('state','!=','draft')]}">
+                                <tree>
+                                    <field name="date"/>
+                                    <field name="journal_id"/>
+                                    <field name="balance_start" string="Saldo Awal" sum="Saldo Awal"/>
+                                    <field name="inbound_total" sum="Kas Masuk"/>
+                                    <field name="outbound_total" sum="Kas Keluar"/>
+                                    <field name="balance_end" string="Saldo Akhir" sum="Saldo Akhir"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+ 
+		<record id="view_account_daily_close_tree" model="ir.ui.view">
+            <field name="name">ka_account.daily.close.tree</field>
+            <field name="model">ka_account.daily.close</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="close_date"/>
+                    <field name="balance_start"/>
+                    <field name="inbound_total"/>
+                    <field name="outbound_total"/>
+                    <field name="balance_end"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+       </record>
+ 
+        <record id="open_account_daily_close" model="ir.actions.act_window">
+            <field name="name">Tutupan Kas Bank Harian</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ka_account.daily.close</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+	</data>
+</odoo>

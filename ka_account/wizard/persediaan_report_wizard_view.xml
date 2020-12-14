@@ -1,0 +1,40 @@
+<odoo> 
+	<data>
+		<record id="persediaan_report_wizard_form" model="ir.ui.view">
+            <field name="name">persediaan.report.wizard.form</field>
+            <field name="model">persediaan.report.wizard</field>
+            <field name="arch" type="xml">
+            	<form string="Nilai Persediaan">
+                	<div class="col-xs-6">
+            			<group>
+            				<field name="account_report_id" domain="[('parent_id','=',False)]" readonly="1"/>
+            				<field name="date_from" readonly="1"/>
+            				<field name="date_to" readonly="1"/>
+            			</group>
+	            	</div>
+	            	<footer>
+	            		<button name="generate_pdf_trial_balance_report" string="Tampilkan Laporan" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                 	</footer>
+            	</form>
+            </field>
+        </record>
+        
+        <record id="action_open_persediaan" model="ir.actions.act_window">
+            <field name="name">Nilai Persediaan</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">persediaan.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="target">new</field>
+        </record>
+        
+        <menuitem 
+        	action="action_open_persediaan"
+			id="menu_persediaan"
+			name="Nilai Persediaan (Akunting)"
+			parent="ka_account.menu_main_persediaan"
+            sequence="1"/>
+        
+	</data>
+</odoo>

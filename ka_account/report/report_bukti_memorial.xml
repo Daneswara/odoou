@@ -1,0 +1,326 @@
+<odoo>
+	<data>
+		<report
+			id="report_bukti_memorial"
+			model="account.move"
+			string="Report Bukti Memorial"
+			name="ka_account.report_bukti_memo"
+			file="ka_account.report_bukti_memo"
+			report_type="qweb-pdf"
+			paperformat="report.paperformat_euro"
+			menu="False"/>
+
+			<template id="report_bukti_memo">
+				<t t-call="report.html_container">
+					<t t-foreach="docs" t-as="doc">
+						<t t-set="sumDebet" t-value="0" />
+						<t t-set="sumCredit" t-value="0" />
+					<div class="header" >
+						<style type="text/css">
+							.table-headtext-td1 {
+							width: 28%;
+							padding-left: 5px;
+							vertical-align: middle;
+							}
+							.table-headtext-td2 {
+							width: 18%;
+							vertical-align: middle;
+							}
+							.table-headtext-td3 {
+							width: 54%;
+							vertical-align: middle;
+							}
+						</style>
+						<div class="row">
+							<div class="col-xs-12">
+								<table width="100%" style="border-collapse: collapse;">
+									<tr height="75px">
+										<td class="text-center" rowspan="2" style="border:1px solid black; width:25%;vertical-align: middle">
+											<img src="ka_report_layout/static/src/img/logo-ptkebonagung.png" style="margin: 0 auto; height: 18px"/>
+											<br/>
+											<span t-esc="user.company_id.name"/><br/>
+											<span t-esc="user.company_id.city" style="text-transform: uppercase;"/>
+										</td>
+
+										<td class="text-center" rowspan="2" style="padding: 5px 10px; font-size:18px;border:1px solid black; width:50%; vertical-align: middle">
+											<strong><span style="color: #3366ff !important;">BUKTI MEMORIAL</span></strong>
+
+										</td>
+										<td style="padding: 10px; border:1px solid black; width:25%">No. <span t-field ="doc.name"/></td>
+									</tr>
+
+									<tr height="50px">
+										<td style="padding: 5px; border:1px solid black; vertical-align: middle">
+											Tanggal : <span t-field ="doc.date"/>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="page">
+						<style type="text/css">
+							@media print {
+								.thead-content {
+									display: table-header-group !important;
+								}
+							}
+
+							.thead-td {
+								border: 1px solid #000 !important;
+							}
+
+							.tr-fixed {
+								height: 20px !important;
+							}
+
+							.td-content {
+								/*margin: 0 !important;*/
+								/*padding: 4px 5px !important;*/
+								vertical-align: middle !important;
+							}
+
+							.td-left-right {
+								border-right: 1px solid #000 !important;
+								border-left: 1px solid #000 !important;
+							}
+
+							.td-right {
+								border-right: 1px solid #000 !important;
+							}
+
+							.td-side {
+								padding: 5px 5px 5px 10px;
+								border: 1px solid #000;
+							}
+
+							.td-bottom {
+								padding: 3px 5px !important;
+								vertical-align: middle !important;
+								border-bottom: 1px solid #000 !important;
+							}
+
+							.td-top {
+							padding: 1px 1px !important;
+							vertical-align: middle !important;
+							border-top: 1px solid #000 !important;
+							}
+
+							.td-top-double {
+							padding: 1px 1px !important;
+							vertical-align: top !important;
+							border-top: double !important;
+							}
+
+							.no-top-bottom {
+								border-top: none !important;
+								border-bottom: none !important;
+							}
+
+							p {
+								margin: 0 !important;
+								padding: 0 !important;
+							}
+						</style>
+						<div class="row">
+							<t t-set="count_lines" t-value="len(doc.line_ids)"/>
+							<div class="col-xs-12">
+								<table class="table table-condensed table-bordered" style="width:100%; font-size:14px; table-layout:fixed">
+									<thead class="thead-content">
+										<tr>
+											<td class="thead-td text-center td-content" style="width:10%">No. Perk.</td>
+											<td class="thead-td text-center td-content" colspan="3" style="width:50%">Nama Perkiraan dan Uraian</td>
+											<td class="thead-td text-center td-content" style="width:20%">DEBET (Rp.)</td>
+											<td class="thead-td text-center td-content" style="width:20%">KREDIT (Rp.)</td>
+										</tr>
+									</thead>
+									<tbody>
+										<t t-set="line_increment" t-value="1"/>
+										<t t-set="full_row" t-value="33"/>
+										<t t-set="temp_account_id" t-value="0"/>
+		                                <t t-set="pages" t-value="0"/>
+										<t t-foreach="doc.line_ids" t-as="line">
+		                                    <!-- if new page -->
+											<t t-if="line_increment % full_row == 0">
+		                                        <t t-set="line_increment" t-value="0"/>
+		                                        <t t-set="pages" t-value="pages + 1"/>
+		                                    </t>
+		                                    <!-- Print code dan nama perkiraan -->
+		                                    <t t-if="line.account_id != temp_account_id">
+												<t t-if="line_increment % full_row == 0">
+													<tr class="tr-fixed" style="font-size:16px;">
+			                                            <td class="td-left-right text-center td-content td-bottom" style="border-top:none;">
+			                                                <span t-field="line.account_id.code"/>
+			                                            </td>
+			                                            <td class="td-left-right td-bottom" style="border-top:none;" colspan="3">
+			                                                <span t-esc="line.account_id.name.upper()"/>
+			                                            </td>
+			                                            <td class="text-right td-right td-content td-bottom" style="border-top:none;"></td>
+			                                            <td class="text-right td-right td-content td-bottom" style="border-top:none;"></td>
+			                                            <t t-set="line_increment" t-value="line_increment + 1"/>
+			                                       </tr>
+												</t>
+												<t t-else="">
+													<tr class="tr-fixed" style="font-size:16px;">
+			                                            <td class="td-left-right text-center td-content no-top-bottom">
+			                                                <span t-field="line.account_id.code"/>
+			                                            </td>
+			                                            <td class="td-left-right no-top-bottom" colspan="3">
+			                                                <span t-esc="line.account_id.name.upper()"/>
+			                                            </td>
+			                                            <td class="text-right td-right td-content no-top-bottom"></td>
+			                                            <td class="text-right td-right td-content no-top-bottom"></td>
+			                                            <t t-set="line_increment" t-value="line_increment + 1"/>
+			                                       </tr>
+												</t>
+		                                   </t>
+		                                    <!-- Print detail -->
+		                                   <tr class="tr-fixed" style="font-size:16px;">
+											   <t t-if="line_increment % full_row == 0">
+												   <td class="td-left-right td-content text-right td-bottom" style="border-top:none;">
+	   		                                            <t t-if="line.analytic_account_id">
+	   		                                                <span t-field="line.analytic_account_id.code"/>
+	   		                                            </t>
+	   		                                            <t t-else="">
+	   		                                                <span t-field="line.partner_id.code" class="text-right"/>
+	   		                                            </t>
+	   		                                        </td>
+	   		                                        <td class="td-left-right td-bottom" style="border-top:none;" colspan="3">
+	   		                                            <span t-esc="line.name"/>
+	   		                                        </td>
+	   		                                        <td class="text-right td-right td-content td-bottom" style="border-top:none;">
+	   													<t t-if="line.debit != 0">
+	   														<t t-esc="str('{0:,.2f}'.format(float(line.debit))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+	   														<t t-set="sumDebet" t-value="sumDebet+line.debit" />
+	   													</t>
+	   													<t t-if="line.debit == 0">
+	   														<span> - </span>
+	   													</t>
+	   		                                        </td>
+	   												<td class="text-right td-right td-content td-bottom" style="border-top:none;">
+	   													<t t-if="line.credit != 0">
+	   														<t t-esc="str('{0:,.2f}'.format(float(line.credit))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+	   														<t t-set="sumCredit" t-value="sumCredit+line.credit" />
+	   													</t>
+	   													<t t-if="line.credit == 0">
+	   														<span> - </span>
+	   													</t>
+	   												</td>
+	   		                                        <t t-set="line_increment" t-value="line_increment + 1"/>
+											   </t>
+											   <t t-else="">
+												   <td class="td-left-right td-content no-top-bottom text-right">
+	   		                                            <t t-if="line.analytic_account_id">
+	   		                                                <span t-field="line.analytic_account_id.code"/>
+	   		                                            </t>
+	   		                                            <t t-else="">
+	   		                                                <span t-field="line.partner_id.code" class="text-right"/>
+	   		                                            </t>
+	   		                                        </td>
+	   		                                        <td class="td-left-right no-top-bottom" colspan="3">
+	   		                                            <span t-esc="line.name"/>
+	   		                                        </td>
+	   		                                        <td class="text-right td-right td-content no-top-bottom">
+	   													<t t-if="line.debit != 0">
+	   														<t t-esc="str('{0:,.2f}'.format(float(line.debit))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+	   														<t t-set="sumDebet" t-value="sumDebet+line.debit" />
+	   													</t>
+	   													<t t-if="line.debit == 0">
+	   														<span> - </span>
+	   													</t>
+	   		                                        </td>
+	   												<td class="text-right td-right td-content no-top-bottom">
+	   													<t t-if="line.credit != 0">
+	   														<t t-esc="str('{0:,.2f}'.format(float(line.credit))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+	   														<t t-set="sumCredit" t-value="sumCredit+line.credit" />
+	   													</t>
+	   													<t t-if="line.credit == 0">
+	   														<span> - </span>
+	   													</t>
+	   												</td>
+	   		                                        <t t-set="line_increment" t-value="line_increment + 1"/>
+											   </t>
+		                                    </tr>
+		                                    <t t-set="temp_account_id" t-value="line.account_id"/>
+		                                </t>
+
+										<!-- print blank rows-->
+										<t t-set="max_row_sisa" t-value="full_row - 2"/>
+										<t t-set="sisa" t-value="(full_row - line_increment) % full_row"/>
+		                                <t t-set="test" t-value="(full_row - line_increment) % full_row"/>
+
+										<t t-if="sisa &lt; 2">
+											<t t-set="sisa" t-value="max_row_sisa"/>
+										</t>
+										<t t-else="">
+											<t t-set="sisa" t-value="sisa - 2"/>
+										</t>
+		                                <t t-foreach="range(sisa)" t-as="i" class="tr-fixed">
+		                                    <t t-set="count_lines" t-value="count_lines + 1"/>
+		                                    <tr class="tr-fixed" style="font-size:16px;">
+		                                        <td class="text-center td-left-right td-content no-top-bottom">
+		                                            <p><![CDATA[&nbsp;]]></p>
+		                                        </td>
+		                                        <td class="td-right td-content no-top-bottom" colspan="3">
+		                                            <p><![CDATA[&nbsp;]]></p>
+		                                        </td>
+		                                        <td class="text-right td-right td-content no-top-bottom">
+		                                            <p><![CDATA[&nbsp;]]></p>
+		                                        </td>
+												<td class="text-right td-right td-content no-top-bottom">
+		                                            <p><![CDATA[&nbsp;]]></p>
+		                                        </td>
+		                                    </tr>
+		                                </t>
+										<tr></tr>
+										<tr class="tr-fixed" style="font-size:16px;height:40px;">
+											<td class="text-center td-bottom td-top-double td-left-right" rowspan="2">
+												Dibuat
+											</td>
+											<td class="text-center td-bottom td-top-double td-left-right" rowspan="2">
+												Diperiksa
+											</td>
+											<td class="text-center td-bottom td-top-double td-left-right" rowspan="2">
+												Diketahui
+											</td>
+											<td class="text-right td-right td-content no-top-bottom">
+												<p><![CDATA[&nbsp;]]></p>
+											</td>
+											<td class="text-right td-right td-content no-top-bottom">
+												<p><![CDATA[&nbsp;]]></p>
+											</td>
+											<td class="text-right td-right td-content no-top-bottom">
+												<p><![CDATA[&nbsp;]]></p>
+											</td>
+										</tr>
+										<tr class="tr-fixed" style="font-size:16px;">
+											<td class="td-bottom td-top td-left-right text-center">
+												Jumlah / Dipindahkan
+											</td>
+											<td class="td-bottom td-top td-left-right" style="text-align: right;">
+												<t t-esc="str('{0:,.2f}'.format(float(sumDebet))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+											</td>
+											<td class="td-bottom td-top td-right" style="text-align: right;">
+												<t t-esc="str('{0:,.2f}'.format(float(sumCredit))).replace('.', '%').replace(',', '.').replace('%', ',')"/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</t>
+			</t>
+			<div class="footer">
+				<div class="text-right">
+					<ul class="list-inline">
+						<li>Page:</li>
+						<li><span class="page"/></li>
+						<li>/</li>
+						<li><span class="topage"/></li>
+					</ul>
+				</div>
+			</div>
+		</template>
+	</data>
+</odoo>

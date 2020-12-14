@@ -1,0 +1,112 @@
+<odoo>
+    <data>
+        <template id="template_inventory_product_slip">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: Arial, Helvetica, sans-serif;">
+                        <t t-foreach="get_product_lines" t-as="product">
+                            <div style="page-break-inside: avoid;">
+                                <div class="row">
+                                    <div class="col-xs-4" style="font-size:16x">
+                                        <span t-field="o.company_id.name"/>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <p style="font-size:18px">
+                                            SLIP PERHITUNGAN FISIK
+                                        </p>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div style="padding-top:5px;padding-bottom:5px;border-top: 1px solid black;border-bottom: 1px solid black;">
+                                    <table width="100%"
+                                           style="font-family: Arial, Helvetica, sans-serif;font-size: 16px;border-collapse: collapse">
+                                        <tr height="25px">
+                                            <td class="text-left" style="padding:3px" width="12%">K O D E</td>
+                                            <td class="text-left" style="padding:3px" width="88%" colspan="3">:
+                                                <span t-field="product.default_code"/>
+                                            </td>
+                                        </tr>
+                                        <tr height="25px">
+                                            <td class="text-left" style="padding:3px">N A M A</td>
+                                            <td class="text-left" style="padding:3px" colspan="3">:
+                                                <span t-field="product.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr height="25px">
+                                            <td class="text-left" style="padding:3px">Spesifikasi</td>
+                                            <td class="text-left" style="padding:3px" colspan="3">:
+                                                <span t-field="product.description"/>
+                                            </td>
+                                        </tr>
+                                        <tr height="25px">
+                                            <td class="text-left" style="padding:3px" width="12%">Pabrikan</td>
+                                            <td class="text-left" style="padding:3px" width="38%">:
+                                                <span t-field="product.pabrikan"/>
+                                            </td>
+                                            <td class="text-left" style="padding:3px" width="13%">No. Referensi</td>
+                                            <td class="text-left" style="padding:3px" width="37%">:
+                                                <span t-field="product.ref_pabrik"/>
+                                            </td>
+                                        </tr>
+                                        <tr height="25px">
+                                            <td class="text-left" style="padding:3px">Lokasi</td>
+                                            <td class="text-left" style="padding:3px">:</td>
+                                            <td class="text-left" style="padding:3px">Satuan</td>
+                                            <td class="text-left" style="padding:3px">:
+                                                <span t-field="product.uom_id.name"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div style="padding-bottom:5px;padding-top:10px;border-bottom: 1px solid black;">
+                                    <table width="100%"
+                                           style="font-family: Arial, Helvetica, sans-serif;font-size: 16px;border-collapse: collapse">
+                                        <tr height="25px">
+                                            <td width="33%">Tanggal :</td>
+                                            <td width="33%">Satuan :</td>
+                                            <td width="33%">Kuantum :</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div style="padding-bottom:100px;padding-top:15px;">
+                                    <table width="100%"
+                                           style="font-family: Arial, Helvetica, sans-serif;font-size: 16px;border-collapse: collapse">
+                                        <tr height="25px">
+                                            <td width="70%">Catatan :</td>
+                                            <td width="30%">Penghitung :</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <record id="letter_no_header" model="report.paperformat">
+            <field name="name">Letter No Headers</field>
+            <field name="format">Letter</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report
+                id="action_report_inventory_product_slip"
+                model="stock.inventory.line"
+                string="Report Inventory Product Slip"
+                report_type="qweb-pdf"
+                name="ka_stock.template_inventory_product_slip"
+                file="ka_stock.report_inventory_product_slip"
+                menu="False"
+                paperformat="ka_stock.letter_no_header"
+        />
+
+    </data>
+</odoo>

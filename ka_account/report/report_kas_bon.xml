@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QWeb Reports -->
+        <report 
+            id="report_kas_bon_a4" 
+            model="ka_account.voucher"
+            string="Kas Bon"
+            report_type="qweb-pdf"
+            name="ka_account.template_kas_bon_a4"
+            file="ka_account.template_kas_bon_a4"
+			menu="False"       
+        /> 
+         <record id="paperformat_kas_bon_a4" model="report.paperformat">
+            <field name="name">Kas Bon A4</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">40</field>
+            <field name="margin_bottom">42</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">27</field>
+            <field name="dpi">90</field>
+        </record>
+		<record id="ka_account.report_kas_bon_a4" model="ir.actions.report.xml">
+		    <field name="paperformat_id" ref="ka_account.paperformat_kas_bon_a4"/>
+		</record>   
+        
+        <report 
+            id="report_kas_bon_a5" 
+            model="ka_account.voucher"
+            string="Kas Bon"
+            report_type="qweb-pdf"
+            name="ka_account.template_kas_bon_a5"
+            file="ka_account.template_kas_bon_a5"
+			menu="False"       
+        /> 
+         <record id="paperformat_kas_bon_a5" model="report.paperformat">
+            <field name="name">Kas Bon A5</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">210</field>
+            <field name="page_width">148</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">32</field>
+            <field name="margin_bottom">33</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">26</field>
+            <field name="dpi">90</field>
+        </record>
+		<record id="ka_account.report_kas_bon_a5" model="ir.actions.report.xml">
+		    <field name="paperformat_id" ref="ka_account.paperformat_kas_bon_a5"/>
+		</record>   
+     </data>
+</odoo>

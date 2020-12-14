@@ -1,0 +1,80 @@
+<odoo>
+    <data>
+        <record id="view_stock_product_request_tree" model="ir.ui.view">
+            <field name="name">stock.product.request.tree</field>
+            <field name="model">stock.product.request</field>
+            <field name="arch" type="xml">
+                <tree decoration-muted="state == 'cancel'">
+                    <field name="name"/> 
+                    <field name="requested_date"/>
+                	<field name="source_unit_id"/> 
+                    <field name="destination_unit_id"/> 
+                    <field name="requester_id"/>
+                   	<field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>  
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_stock_product_request_form" model="ir.ui.view">
+            <field name="name">stock.product.request.form</field>
+            <field name="model">stock.product.request</field>
+            <field name="arch" type="xml">
+                <form>
+                	<header>
+                        <button name="action_submit" states="draft" type="object" class="oe_highlight" string="Submit"/>
+                        <button name="action_approve" groups="sales_team.group_sale_manager" states="submit" type="object" class="oe_highlight" string="Approve"/>
+                        <button name="action_cancel" states="submit" type="object" string="Cancel"/>               
+                        <button name="action_set_draft" states="cancel" type="object" string="Set To Draft"/>                   
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,approved"/>
+                    </header>            
+                    <sheet>
+                    	<div class="oe_button_box" name="button_box">
+		                    <button name="action_view_picking" string="Penerimaan" type="object" class="oe_stat_button" 
+		                    	icon="fa-truck" attrs="{'invisible': [('picking_ids','=',[])]}"> 
+		                    </button>
+		                </div>
+                        <div>
+                        	<label string="Nomor Permintaan" attrs="{'invisible': [('state','=','draft')]}"/>
+                            <h1><field name="name" attrs="{'readonly': True}"/></h1>
+                        </div>
+                        <group>
+                        	<group>
+	                    		<field name="source_unit_id" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+			                    <field name="destination_unit_id" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+			                    <field name="company_id" invisible="1"/>
+                	 	  	</group>
+                        	<group>
+                        		<field name="order_date" attrs="{'invisible': [('state','=','draft')]}"/>
+	                    		<field name="requested_date" required="1" attrs="{'readonly': [('state','not in',('draft','submit'))]}"/>
+	                    		<field name="requester_id" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+			                    <field name="picking_ids" invisible="1"/>
+                	 	  	</group>
+						</group>
+						<field name="request_line_ids" nolabel="1" attrs="{'readonly': [('state','!=','draft')]}">
+							<tree editable="bottom">
+								<field name="product_id" required="1"/>
+								<field name="uom_id" required="1"/>
+								<field name="requested_qty" required="1"/>
+							</tree>
+						</field>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+     	<record id="action_open_stock_product_request" model="ir.actions.act_window">
+            <field name="name">Permintaan Antar Unit</field>
+            <field name="res_model">stock.product.request</field>
+            <field name="view_type">form</field> 
+            <field name="view_mode">tree,form</field>             
+        </record>
+        
+        <menuitem id="menu_stock_product_request" action="action_open_stock_product_request" parent="stock.menu_stock_warehouse_mgmt" sequence="3"/>
+        
+    </data>
+</odoo>

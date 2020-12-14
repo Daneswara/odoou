@@ -1,0 +1,59 @@
+<odoo>
+    <data>
+        <record id="view_ka_account_cashflow_account_mapping_tree" model="ir.ui.view">
+            <field name="name">ka_account_cashflow_account_mapping_tree</field>
+            <field name="model">ka_account.cashflow.account.mapping</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="account_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_ka_account_cashflow_account_mapping_form" model="ir.ui.view">
+            <field name="name">ka_account_cashflow_account_mapping_form</field>
+            <field name="model">ka_account.cashflow.account.mapping</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="account_id" options="{'no_create': True, 'no_edit': True}"/>
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_cashflow_account_mapping" model="ir.actions.act_window">
+            <field name="name">Cashflow Account Master</field>
+            <field name="res_model">ka_account.cashflow.account.mapping</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.server" id="action_server_view_cashflow_account_mapping">
+            <field name="name">Cashflow Account Mapping</field>
+            <field name="model_id" ref="model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="sequence">1</field>
+            <field name="code">
+                action = model.action_view_cashflow_account_mapping()
+            </field>
+        </record>
+
+        <menuitem id="menu_cashflow_account_mapping" 
+			name="Cashflow Account Master"
+			parent="menu_main_cash_flow"
+            action="action_view_cashflow_account_mapping" 
+			sequence="3"/>
+
+        <menuitem id="menu_cashflow_report_account_mapping"
+            name="Cashflow Account Mapping"
+            action="action_server_view_cashflow_account_mapping"
+            parent="menu_main_cash_flow" 
+            sequence="4"/>
+            
+    </data>
+</odoo>

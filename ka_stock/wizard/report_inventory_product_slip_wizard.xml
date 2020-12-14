@@ -1,0 +1,43 @@
+<odoo>
+	<data>
+		<record id="view_report_inventory_product_slip_wizard" model="ir.ui.view">
+            <field name="name">view.report.inventory.product.slip.wiz</field>
+            <field name="model">report.inventory.product.slip.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Cetak Slip Stok Opname">
+                    <div class="col-xs-6">
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="type"/>
+                            <field name="default_code1" attrs="{'invisible':[('type', '=', 'category')]}"/>
+                            <field name="default_code2" attrs="{'invisible':[('type', '=', 'category')]}"/>
+                            <field name="category_id" attrs="{'invisible':[('type', '=', 'product')]}"/>
+                            <field name="qty_available" required="1"/>
+                            <field name="location_id" options="{'no_create': 1, 'no_create_edit': 1}"/>
+                        </group>
+                    </div>
+                    <footer>
+                        <button name="generate_report" string="Print" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+		<record id="action_report_inventory_product_slip_wizard" model="ir.actions.act_window">
+            <field name="name">Cetak Slip Stok Opname</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">report.inventory.product.slip.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_report_inventory_product_slip_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_report_inventory_product_slip_wizard"
+        	action="action_report_inventory_product_slip_wizard"
+        	name="Cetak Slip Stok Opname"
+        	parent="stock.menu_stock_inventory_control"
+        	sequence="29"/>
+	</data>
+</odoo>

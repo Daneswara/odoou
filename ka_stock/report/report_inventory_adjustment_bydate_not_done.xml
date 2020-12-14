@@ -1,0 +1,81 @@
+<odoo>
+	<data>
+		<template id="template_inventory_adjustment_bydate_not_done">
+			<t t-call="report.html_container">
+				<t t-foreach="docs" t-as="o">
+					<div class="header">
+						<div class="row">
+							<div class="col-xs-4" style="font-size:16x">
+								<span t-field="o.company_id.name"/><br/>
+								<span t-field="o.company_id.city"/>
+							</div>
+							<div class="col-xs-8">
+								<p style="font-size:18px">
+									<strong>LAPORAN PERSEDIAAN BELUM STOCK OPNAME</strong>
+								</p>
+								<p style="font-size:16px">
+									Tanggal  : <span t-field="o.date_start"/> S/D <span t-field="o.date_end"/>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="page" style="font-family: Arial, Helvetica, sans-serif;">
+						<div class="row">
+							<t t-set="no" t-value="1"/>
+							<table class="table" width="100%" style="font-family: Arial, Helvetica, sans-serif;font-size: 16px;border-collapse: collapse">
+								<thead>
+									<tr height="25px">
+										<th class="text-center" rowspan="2" style="padding:8px;vertical-align:middle;border:1px solid #000">No.</th>
+										<th class="text-center" rowspan="2" style="padding:8px;vertical-align:middle;border:1px solid #000">Kode Barang</th>
+										<th class="text-center" rowspan="2" style="padding:8px;vertical-align:middle;border:1px solid #000">Nama Barang</th>
+										<th class="text-center" rowspan="2" style="padding:8px;vertical-align:middle;border:1px solid #000">Spesifikasi</th>
+										<th class="text-center" rowspan="2" style="padding:8px;vertical-align:middle;border:1px solid #000">Satuan</th>
+									</tr>
+								</thead>
+								<tbody>
+									<t t-set="total_theoretical_value" t-value="0"/>
+									<t t-set="total_product_value" t-value="0"/>
+									<t t-set="total_difference_value" t-value="0"/>
+									<tr t-foreach="get_product_lines" t-as="line" height="25px">
+										<td class="text-center" style="padding:3px;border:1px solid #000"><span t-esc="no"/></td>
+										<td style="padding:3px;border:1px solid #000"><span t-field="line.default_code"/></td>
+										<td style="padding:3px;border:1px solid #000"><span t-field="line.name"/></td>
+										<td style="padding:3px;border:1px solid #000"><span t-field="line.description"/></td>
+										<td class="text-right" style="padding:3px;border:1px solid #000"><span t-field="line.uom_id.name"/></td>
+										<t t-set="no" t-value="no+1"/>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</t>
+			</t>
+		</template>
+
+		<record id="paperformat_report_inventory_A4" model="report.paperformat">
+            <field name="name">A4 Inventory Report</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">15</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">25</field>
+            <field name="dpi">90</field>
+        </record>
+
+		<report
+            id="action_report_inventory_adjustment_bydate_not_done"
+            model="product.product"
+            string="Report Inventory Adjustment By Date (Not Done)"
+            report_type="qweb-pdf"
+            name="ka_stock.template_inventory_adjustment_bydate_not_done"
+			menu="False"
+			paperformat="ka_stock.paperformat_report_inventory_A4"
+        />
+
+	</data>
+</odoo>
